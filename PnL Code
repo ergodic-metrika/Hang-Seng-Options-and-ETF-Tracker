@@ -1,0 +1,76 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
+
+# Load the Excel file
+excel_file = pd.ExcelFile('D:\Derivatives Trading\Mini Hang Seng.xlsx')
+
+# Get the sheet you want to read
+sheet_name = 'For Python' # Replace with the name of the sheet you want to read
+df = excel_file.parse(sheet_name)
+
+# Output data information
+print(df.head())
+
+#******Plotting setup*****#
+# Generate some data
+Date = df["Date"]
+Date
+y1 =df["PnL Index"]
+y1
+y2 = df["Hang Seng"]
+y2
+
+# Get the maximum PnL value
+max_pnl = df['PnL Index'].max()
+max_pnl_date = df.loc[df['PnL Index']==max_pnl, 'Date'].values[0]
+
+# Create the plot and set the first y-axis (left)
+fig, ax1 = plt.subplots()
+plt.xticks(rotation=90)
+ax1.plot(Date, y1, 'b-')
+ax1.scatter(max_pnl_date, max_pnl, color='red', marker='*')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('PnL Index (Base = 100)', color='b')
+ax1.tick_params('y', colors='b')
+
+# Set the second y-axis (right)
+ax2 = ax1.twinx()
+ax2.plot(Date, y2, color='deepskyblue', marker=',')
+ax2.set_ylabel('Hang Seng', color='deepskyblue')
+ax2.tick_params('y', colors='deepskyblue')
+
+# Add message box
+msg = "Red * : Highest PnL"
+props = dict(boxstyle='round', facecolor='white', alpha=0.5)
+ax1.text(0.05, 0.95, msg, transform=ax1.transAxes, fontsize=8,
+        verticalalignment='top', bbox=props)
+
+# Show the plot
+plt.title('PnL vs Hang Seng')
+plt.show()
+
+#Pnl vs HK's Hang Seng VIX
+y3 = df["HSI VIX"]
+y3
+
+# Create the plot and set the first y-axis (left)
+fig, ax1 = plt.subplots()
+plt.xticks(rotation=90)
+ax1.plot(Date, y1, 'b-')
+ax1.scatter(max_pnl_date, max_pnl, color='red', marker='*')
+ax1.set_xlabel('Date')
+ax1.set_ylabel('PnL Index (Base = 100)', color='b')
+ax1.tick_params('y', colors='b')
+
+# Set the second y-axis (right)
+ax3 = ax1.twinx()
+ax3.plot(Date, y3, 'fuchsia', marker='1', linestyle='-.')
+ax3.set_ylabel('HSI VIX', color='fuchsia')
+ax3.tick_params('y', colors='fuchsia')
+
+
+# Show the plot
+plt.title('PnL vs HSI VIX')
+plt.show()
