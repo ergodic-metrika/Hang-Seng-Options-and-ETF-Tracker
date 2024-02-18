@@ -1,3 +1,4 @@
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -66,9 +67,9 @@ ax1.tick_params('y', colors='b')
 
 # Set the second y-axis (right)
 ax3 = ax1.twinx()
-ax3.plot(Date, HSI_VIX , 'fuchsia', marker='1', linestyle='-.')
-ax3.set_ylabel('HSI VIX', color='fuchsia')
-ax3.tick_params('y', colors='fuchsia')
+ax3.plot(Date, HSI_VIX , 'tan', marker='1', linestyle='-.')
+ax3.set_ylabel('HSI VIX', color='tan')
+ax3.tick_params('y', colors='tan')
 
 # Add message box
 msg = "Red * :PnL at Peak"
