@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 
 # Load the Excel file
-excel_file = pd.ExcelFile('D:\Derivatives Trading\Mini Hang Seng.xlsx')
+excel_file = pd.ExcelFile('D:\Derivatives Trading\Mini Hang Seng.xlsm')
 
 # Get the sheet you want to read
 sheet_name = 'For Python' # Replace with the name of the sheet you want to read
@@ -42,7 +42,7 @@ ax2.set_ylabel('Hang Seng', color='deepskyblue')
 ax2.tick_params('y', colors='deepskyblue')
 
 # Add message box
-msg = "Red * : Highest PnL"
+msg = "Red * :PnL at Peak"
 props = dict(boxstyle='round', facecolor='white', alpha=0.5)
 ax1.text(0.05, 0.95, msg, transform=ax1.transAxes, fontsize=8,
         verticalalignment='top', bbox=props)
@@ -52,8 +52,8 @@ plt.title('PnL vs Hang Seng')
 plt.show()
 
 #Pnl vs HK's Hang Seng VIX
-y3 = df["HSI VIX"]
-y3
+HSI_VIX = df["HSI VIX"]
+HSI_VIX 
 
 # Create the plot and set the first y-axis (left)
 fig, ax1 = plt.subplots()
@@ -66,9 +66,15 @@ ax1.tick_params('y', colors='b')
 
 # Set the second y-axis (right)
 ax3 = ax1.twinx()
-ax3.plot(Date, y3, 'fuchsia', marker='1', linestyle='-.')
+ax3.plot(Date, HSI_VIX , 'fuchsia', marker='1', linestyle='-.')
 ax3.set_ylabel('HSI VIX', color='fuchsia')
 ax3.tick_params('y', colors='fuchsia')
+
+# Add message box
+msg = "Red * :PnL at Peak"
+props = dict(boxstyle='round', facecolor='white', alpha=0.5)
+ax1.text(0.05, 0.95, msg, transform=ax1.transAxes, fontsize=8,
+        verticalalignment='top', bbox=props)
 
 
 # Show the plot
