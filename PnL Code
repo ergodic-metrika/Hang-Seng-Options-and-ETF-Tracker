@@ -1,4 +1,11 @@
 
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Dec 27 22:28:19 2023
+
+@author: user
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -81,3 +88,112 @@ ax1.text(0.05, 0.95, msg, transform=ax1.transAxes, fontsize=8,
 # Show the plot
 plt.title('PnL vs HSI VIX')
 plt.show()
+
+
+##############################Performance####################
+##########################################Performance###############################################
+#Sharpe ratio
+# Read in the portfolio returns data from a CSV file
+R_first=df["PnL Index"].iloc[0,]
+R_first
+R_last = df["PnL Index"].iloc[-1]  #Always excel's actual row-2
+R_last
+portfolio_returns=(R_last-R_first)/R_first
+portfolio_returns
+
+daily_returns=df["Returns"]
+daily_returns
+
+# Max Drawdown Calculation for PnL Index
+cumulative_returns = (1 + df["Returns"]).cumprod()
+cumulative_max = cumulative_returns.cummax()
+drawdown = (cumulative_returns / cumulative_max) - 1
+max_drawdown = drawdown.min()
+
+print("Max Drawdown:", max_drawdown)
+
+# Calculate the excess returns and standard deviation
+risk_free_rate = 0.04  # Hong Kong HIBOR
+#Source: https://www.hsbc.com.hk/mortgages/tools/hibor-rate/
+excess_returns = portfolio_returns - risk_free_rate
+std_dev = np.std(daily_returns)
+print("Standard Deviation of Daily Return:", std_dev)
+
+# Calculate the Sharpe ratio
+Sharpe_Ratio = excess_returns / std_dev
+print("Sharpe Ratio:", Sharpe_Ratio)
+
+# Convert 'Date' column to datetime if it is not already
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Calculate the number of unique trading days
+num_trading_days = df['Date'].nunique()
+print("Number of Actual Trading Days:", num_trading_days)
+
+
+#Annualized Sharpe ratio
+risk_free_rate_daily = (1 + risk_free_rate) ** (1/250) - 1
+risk_free_rate_daily 
+average_daily_returns = daily_returns.sum() / num_trading_days
+print("Average Daily Returns:", average_daily_returns)
+
+excess_daily_return=average_daily_returns-risk_free_rate_daily 
+excess_daily_return
+
+Annualized_Sharpe_Ratio=excess_daily_return/std_dev*np.sqrt(250)
+print("Annualized Sharpe Ratio:", Annualized_Sharpe_Ratio)
+
+# Calculate the Profit Factor
+positive_returns = daily_returns[daily_returns > 0].sum()
+negative_returns = daily_returns[daily_returns < 0].sum()
+
+# Avoid division by zero
+if negative_returns != 0:
+    profit_factor = abs(positive_returns / negative_returns)
+else:
+    profit_factor = float('inf')
+
+print("Profit Factor:", profit_factor)
+
+
+###############################Alpha##############
+# Ensure the 'Date' column is in datetime format
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Sort the DataFrame based on the 'Date' column to ensure chronological order
+df = df.sort_values('Date')
+
+# Calculate daily returns of the Hang Seng index as percentage change from the previous row
+df['HSI_daily_return'] = df['Hang Seng'].pct_change()
+
+# Calculate the mean of the daily returns of HSI
+
+mean_HSI_return = df['HSI_daily_return'][1:].mean()
+
+print("Mean Daily Return of Hang Seng:", mean_HSI_return)
+
+#Portfolio Alpha
+# Compute the mean returns
+# Calculate daily returns of the PnL as percentage change from the previous row
+df['PnL_daily_return'] = df['PnL Index'].pct_change()
+
+# Calculate the mean (average) of the daily returns
+
+mean_PnL_return = df['PnL_daily_return'][1:].mean()
+
+print("Mean Daily Return of PnL:", mean_PnL_return)
+
+
+# Compute beta
+covariance = df['PnL_daily_return'].cov(df['HSI_daily_return'])
+
+print("Covariance between PnL and Hang Seng daily returns:", covariance)
+variance = df['HSI_daily_return'].var()
+variance
+beta = covariance / variance
+beta
+
+# Compute alpha (assuming risk-free rate is 0)
+alpha = (mean_PnL_return - (risk_free_rate_daily  +beta * mean_HSI_return))*np.sqrt(250)
+# Print alpha
+print("Alpha: ", alpha)
